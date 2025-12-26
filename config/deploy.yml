@@ -1,0 +1,66 @@
+service: lumos-soultone-wp
+image: northernrobin/lumos-soultone-wp
+
+registry:
+  username: northernrobin
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+ssh:
+  user: robin
+
+servers:
+  web:
+    hosts:
+      - 192.168.200.70        # OVH production server IP (replace with real)
+    #options:
+      # You can add labels or extra options here later if needed
+      #network: bridge
+
+env:
+  clear:
+    # DB connection (internal Docker hostnames)
+    WORDPRESS_DB_HOST: lumos-soultone-wp-db
+    WORDPRESS_DEBUG: "false"
+    WORDPRESS_DB_USER: soultonepickups
+    WORDPRESS_DB_NAME: soultonepickups
+    WORDPRESS_CONFIG_EXTRA: "ini_set('display_errors', '0'); define('WP_DEBUG', false); define('WP_DEBUG_DISPLAY', false); define('FORCE_SSL_ADMIN', true); if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) { $_SERVER['HTTPS'] = 'on'; }"
+  secret:
+    - WORDPRESS_DB_PASSWORD
+
+# Volumes for WordPress (persistent data)
+volumes:
+  - /var/lib/kamal/soultone/wp_data:/var/www/html/wp-content
+
+# Accessories: MariaDB + Redis (object cache)
+
+accessories:
+  db:
+    image: mariadb:10.11
+    hosts:
+      - 192.168.200.70
+
+    env:
+
+      secret:
+        - MARIADB_ROOT_PASSWORD
+
+
+    volumes:
+      - /var/lib/kamal/soultone/mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    hosts:
+      - 192.168.200.70
+    volumes: []
+    # Later you can wire this into Redis page/fragment cache plugins
+builder:
+  arch: amd64  # Most basement servers/PCs are amd64
+
+proxy:
+  ssl: false
+  host: soultonepickups.com,www.soultonepickups.com
+  app_port: 80
+  healthcheck:
+    path: /license.txt

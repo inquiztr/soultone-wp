@@ -1,0 +1,36 @@
+# Ignore environment and secret files
+.env
+*.env
+config/secrets.yml
+config/*.secrets
+.kamal/secrets
+
+# Ignore editor and OS files
+*.swp
+*.swo
+*.bak
+*~
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore node_modules and vendor
+node_modules/
+vendor/
+
+# Ignore Docker and build artifacts
+dist/
+build/
+*.tar.gz
+*.zip
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore other sensitive files
+*.pem
+*.key
+*.crt
