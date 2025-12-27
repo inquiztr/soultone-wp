@@ -1,0 +1,14 @@
+{
+    "Rules": [
+        {
+            "ID": "KeepLast60Days",
+            "Status": "Enabled",
+            "Filter": {
+                "Prefix": "soultone/"
+            },
+            "Expiration": {
+                "Days": 60
+            }
+        }
+    ]
+}
